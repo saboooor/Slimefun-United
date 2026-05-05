@@ -11,7 +11,7 @@ import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockPlaceHandler;
 import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
-import io.github.thebusybiscuit.slimefun4.core.services.holograms.ArmorStandHologramsService;
+import io.github.thebusybiscuit.slimefun4.core.services.holograms.HologramsService;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
 import io.github.thebusybiscuit.slimefun4.utils.ArmorStandUtils;
@@ -38,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
  * @author SoSeDiK
  *
  * @see HologramOwner
- * @see ArmorStandHologramsService
+ * @see HologramsService
  *
  */
 public class HologramProjector extends SlimefunItem implements HologramOwner {
