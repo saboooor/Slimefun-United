@@ -18,10 +18,10 @@ import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay;
-import org.bukkit.entity.Display.Billboard;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -161,7 +161,7 @@ public class DisplayHologramsService implements HologramsService {
         if (hologram == null && createIfNoneExists) {
             // Spawn a new TextDisplay
             TextDisplay textDisplay = (TextDisplay) loc.getWorld().spawnEntity(loc, EntityType.TEXT_DISPLAY);
-            textDisplay.setBillboard(Billboard.FIXED);
+            textDisplay.setBillboard(Billboard.CENTER);
             PersistentDataContainer container = textDisplay.getPersistentDataContainer();
 
             return getAsHologram(position, textDisplay, container);
