@@ -57,6 +57,8 @@ public class HologramsService {
      */
     private final Vector defaultOffset = new Vector(0.5, 0.75, 0.5);
 
+    private final Vector textDisplayOffset = new Vector(0.5, 1, 0.5);
+
     /**
      * The {@link NamespacedKey} used to store data on a hologram
      */
