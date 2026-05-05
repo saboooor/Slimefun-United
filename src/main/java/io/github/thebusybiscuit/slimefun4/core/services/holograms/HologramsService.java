@@ -57,6 +57,7 @@ public class HologramsService {
      * The default hologram offset
      */
     private final Vector defaultOffset = new Vector(0.5, 0.75, 0.5);
+
     private final Vector textDisplayOffset = new Vector(0.5, 1, 0.5);
 
     /**
@@ -193,7 +194,6 @@ public class HologramsService {
     private Hologram spawnTextDisplay(Location loc, BlockPosition position) {
         TextDisplay textDisplay = (TextDisplay) loc.getWorld().spawnEntity(loc, EntityType.TEXT_DISPLAY);
         textDisplay.setBillboard(Billboard.CENTER);
-        textDisplay.setBackgroundColor(Color.RED);
         PersistentDataContainer container = textDisplay.getPersistentDataContainer();
 
         return getAsHologram(position, textDisplay, container);
