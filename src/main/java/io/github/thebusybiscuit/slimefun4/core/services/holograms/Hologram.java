@@ -1,6 +1,5 @@
 package io.github.thebusybiscuit.slimefun4.core.services.holograms;
 
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -50,39 +49,19 @@ class Hologram {
     }
 
     /**
-     * This returns the corresponding {@link TextDisplay}
+     * This returns the corresponding {@link TextDisplay} or {@link ArmorStand}
      * and also updates the "lastAccess" timestamp.
      * <p>
-     * If the {@link TextDisplay} was removed, it will return null.
+     * If the {@link TextDisplay} or {@link ArmorStand} was removed, it will return null.
      *
-     * @return The {@link TextDisplay} or null.
+     * @return The {@link TextDisplay} or {@link ArmorStand} or null.
      */
-    @Nullable TextDisplay getDisplay() {
+    @Nullable Entity getEntity() {
         Entity n = Bukkit.getEntity(uniqueId);
 
-        if (n instanceof TextDisplay textDisplay && n.isValid()) {
+        if ((n instanceof TextDisplay || n instanceof ArmorStand) && n.isValid()) {
             this.lastAccess = System.currentTimeMillis();
-            return textDisplay;
-        } else {
-            this.lastAccess = 0;
-            return null;
-        }
-    }
-
-    /**
-     * This returns the corresponding {@link ArmorStand}
-     * and also updates the "lastAccess" timestamp.
-     * <p>
-     * If the {@link ArmorStand} was removed, it will return null.
-     *
-     * @return The {@link ArmorStand} or null.
-     */
-    @Nullable ArmorStand getArmorStand() {
-        Entity n = Bukkit.getEntity(uniqueId);
-
-        if (n instanceof ArmorStand armorStand && n.isValid()) {
-            this.lastAccess = System.currentTimeMillis();
-            return armorStand;
+            return n;
         } else {
             this.lastAccess = 0;
             return null;
@@ -95,7 +74,7 @@ class Hologram {
      * @return Whether the {@link TextDisplay} or {@link ArmorStand} despawned
      */
     boolean hasDespawned() {
-        return getDisplay() == null || getArmorStand() == null;
+        return getEntity() == null;
     }
 
     /**
@@ -123,10 +102,8 @@ class Hologram {
             this.lastAccess = System.currentTimeMillis();
         } else {
             this.label = label;
-
-            if (Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)) {
-                TextDisplay textDisplay = getDisplay();
-
+            Entity n = getEntity();
+            if (n instanceof TextDisplay textDisplay) {
                 if (textDisplay != null) {
                     if (label != null) {
                         textDisplay.text(Component.text(label));
@@ -134,9 +111,7 @@ class Hologram {
                         textDisplay.text(null);
                     }
                 }
-            } else {
-                ArmorStand armorStand = getArmorStand();
-
+            } else if (n instanceof ArmorStand armorStand) {
                 if (armorStand != null) {
                     if (label != null) {
                         armorStand.setCustomNameVisible(true);
@@ -154,17 +129,11 @@ class Hologram {
      * This will remove the {@link TextDisplay} or {@link ArmorStand} and expire this {@link Hologram}.
      */
     void remove() {
-        TextDisplay textDisplay = getDisplay();
-        ArmorStand armorStand = getArmorStand();
+        Entity n = getEntity();
 
-        if (textDisplay != null) {
-            lastAccess = 0;
-            textDisplay.remove();
-        }
-
-        if (armorStand != null) {
-            lastAccess = 0;
-            armorStand.remove();
+        if (n instanceof TextDisplay || n instanceof ArmorStand) {
+            this.lastAccess = 0;
+            n.remove();
         }
     }
 }

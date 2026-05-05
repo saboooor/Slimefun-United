@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import org.apache.commons.lang.Validate;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
@@ -56,6 +57,7 @@ public class HologramsService {
      * The default hologram offset
      */
     private final Vector defaultOffset = new Vector(0.5, 0.75, 0.5);
+    private final Vector textDisplayOffset = new Vector(0.5, 1, 0.5);
 
     /**
      * The {@link NamespacedKey} used to store data on a hologram
@@ -95,7 +97,7 @@ public class HologramsService {
      */
     @Nonnull
     public Vector getDefaultOffset() {
-        return defaultOffset;
+        return Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4) ? textDisplayOffset : defaultOffset;
     }
 
     /**
@@ -131,7 +133,7 @@ public class HologramsService {
         BlockPosition position = new BlockPosition(loc);
         Hologram hologram = cache.get(position);
 
-        // Check if the Display or ArmorStand was cached and still exists
+        // Check if the TextDisplay or ArmorStand was cached and still exists
         if (hologram != null && !hologram.hasDespawned()) {
             return hologram;
         }
@@ -149,14 +151,16 @@ public class HologramsService {
                  * Make sure that the value matches our BlockPosition.
                  */
                 if (hasHologramData(container, position)) {
+                    // Migrate to TextDisplay if we're on 1.19.4 or higher
                     if (hologram != null) {
                         // Fixes #2927 - Remove any duplicates we find
                         n.remove();
-                    } else if (n instanceof ArmorStand
-                            && Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)) {
-                        // Replace ArmorStand with TextDisplay.
-                        n.remove();
-                        hologram = spawnTextDisplay(loc, position);
+                    } else if (Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)
+                            && n instanceof ArmorStand armorStand) {
+
+                        hologram = spawnTextDisplay(armorStand.getLocation().add(0, 0.25, 0), position);
+                        hologram.setLabel(armorStand.getCustomName());
+                        armorStand.remove();
                     } else {
                         hologram = getAsHologram(position, n, container);
                     }
@@ -189,6 +193,7 @@ public class HologramsService {
     private Hologram spawnTextDisplay(Location loc, BlockPosition position) {
         TextDisplay textDisplay = (TextDisplay) loc.getWorld().spawnEntity(loc, EntityType.TEXT_DISPLAY);
         textDisplay.setBillboard(Billboard.CENTER);
+        textDisplay.setBackgroundColor(Color.RED);
         PersistentDataContainer container = textDisplay.getPersistentDataContainer();
 
         return getAsHologram(position, textDisplay, container);
@@ -204,7 +209,6 @@ public class HologramsService {
      */
     @ParametersAreNonnullByDefault
     private Hologram spawnArmorStand(Location loc, BlockPosition position) {
-        // Spawn a new ArmorStand
         ArmorStand armorStand = (ArmorStand) loc.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
         PersistentDataContainer container = armorStand.getPersistentDataContainer();
 
@@ -285,8 +289,7 @@ public class HologramsService {
             cache.put(position, hologram);
 
             return hologram;
-        }
-        {
+        } else {
             // This should never be reached
             return null;
         }
