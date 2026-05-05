@@ -1,8 +1,8 @@
 package io.github.thebusybiscuit.slimefun4.utils;
 
-import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import javax.annotation.Nonnull;
 
 /**

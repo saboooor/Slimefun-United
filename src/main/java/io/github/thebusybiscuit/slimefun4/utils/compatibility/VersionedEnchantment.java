@@ -2,7 +2,6 @@ package io.github.thebusybiscuit.slimefun4.utils.compatibility;
 
 import io.github.bakedlibs.dough.versions.MinecraftVersion;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.bukkit.NamespacedKey;

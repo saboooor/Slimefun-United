@@ -114,8 +114,6 @@ import io.github.thebusybiscuit.slimefun4.integrations.IntegrationsManager;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import io.github.thebusybiscuit.slimefun4.utils.tags.SlimefunTag;
 import io.papermc.lib.PaperLib;
-import lombok.Getter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -128,6 +126,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.MenuListener;
 import net.guizhanss.slimefun4.updater.AutoUpdateTask;
 import org.apache.commons.lang.Validate;
@@ -203,10 +202,7 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
     private final PermissionsService permissionsService = new PermissionsService(this);
     private final PerWorldSettingsService worldSettingsService = new PerWorldSettingsService(this);
     private final MinecraftRecipeService recipeService = new MinecraftRecipeService(this);
-    private final HologramsService hologramsService =
-            getMinecraftVersion().isAtLeast(1, 19, 4)
-                    ? new DisplayHologramsService(this)
-                    : new ArmorStandHologramsService(this);
+    private HologramsService hologramsService;
     private final SoundService soundService = new SoundService(this);
     private final ThreadService threadService = new ThreadService(this);
     private final AnalyticsService analyticsService = new AnalyticsService(this);
@@ -380,6 +376,10 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
                     networkSize);
             networkSize = 1;
         }
+
+        hologramsService = getMinecraftVersion().isAtLeast(1, 19, 4)
+            ? new DisplayHologramsService(this)
+            : new ArmorStandHologramsService(this);
 
         networkManager = new NetworkManager(
                 networkSize,
