@@ -17,9 +17,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Server;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.entity.Display.Billboard;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -159,6 +161,7 @@ public class DisplayHologramsService implements HologramsService {
         if (hologram == null && createIfNoneExists) {
             // Spawn a new TextDisplay
             TextDisplay textDisplay = (TextDisplay) loc.getWorld().spawnEntity(loc, EntityType.TEXT_DISPLAY);
+            textDisplay.setBillboard(Billboard.FIXED);
             PersistentDataContainer container = textDisplay.getPersistentDataContainer();
 
             return getAsHologram(position, textDisplay, container);
@@ -187,6 +190,14 @@ public class DisplayHologramsService implements HologramsService {
      * @return Whether this could be a hologram
      */
     private boolean isHologram(@Nonnull Entity n) {
+        if (n instanceof ArmorStand armorStand
+                && !armorStand.isVisible()
+                && armorStand.isSilent()
+                && !armorStand.hasGravity()) {
+            // This is an old hologram, it should be removed
+            armorStand.remove();
+            return false;
+        }
         return n instanceof TextDisplay;
     }
 

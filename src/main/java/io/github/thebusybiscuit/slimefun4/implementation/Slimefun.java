@@ -378,8 +378,8 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
         }
 
         hologramsService = getMinecraftVersion().isAtLeast(1, 19, 4)
-            ? new DisplayHologramsService(this)
-            : new ArmorStandHologramsService(this);
+                ? new DisplayHologramsService(this)
+                : new ArmorStandHologramsService(this);
 
         networkManager = new NetworkManager(
                 networkSize,
