@@ -35,6 +35,8 @@ import io.github.thebusybiscuit.slimefun4.core.services.PermissionsService;
 import io.github.thebusybiscuit.slimefun4.core.services.ThreadService;
 import io.github.thebusybiscuit.slimefun4.core.services.UpdaterService;
 import io.github.thebusybiscuit.slimefun4.core.services.github.GitHubService;
+import io.github.thebusybiscuit.slimefun4.core.services.holograms.ArmorStandHologramsService;
+import io.github.thebusybiscuit.slimefun4.core.services.holograms.DisplayHologramsService;
 import io.github.thebusybiscuit.slimefun4.core.services.holograms.HologramsService;
 import io.github.thebusybiscuit.slimefun4.core.services.profiler.SlimefunProfiler;
 import io.github.thebusybiscuit.slimefun4.core.services.sounds.SoundService;
@@ -191,7 +193,10 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
     private final PermissionsService permissionsService = new PermissionsService(this);
     private final PerWorldSettingsService worldSettingsService = new PerWorldSettingsService(this);
     private final MinecraftRecipeService recipeService = new MinecraftRecipeService(this);
-    private final HologramsService hologramsService = new HologramsService(this);
+    private final HologramsService hologramsService =
+            SlimefunExtended.getMinecraftVersion().isAtLeast(1, 19, 4)
+                    ? new DisplayHologramsService(this)
+                    : new ArmorStandHologramsService(this);
     private final SoundService soundService = new SoundService(this);
     private final ThreadService threadService = new ThreadService(this);
     private final AnalyticsService analyticsService = new AnalyticsService(this);

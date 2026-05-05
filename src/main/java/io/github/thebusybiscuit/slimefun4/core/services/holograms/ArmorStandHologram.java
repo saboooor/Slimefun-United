@@ -5,6 +5,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -14,10 +15,10 @@ import org.bukkit.entity.Entity;
  *
  * @author TheBusyBiscuit
  */
-class Hologram {
+class ArmorStandHologram {
 
     /**
-     * This is the minimum duration after which the {@link Hologram} will expire.
+     * This is the minimum duration after which the {@link ArmorStandHologram} will expire.
      */
     private static final long EXPIRES_AFTER = TimeUnit.MINUTES.toMillis(10);
 
@@ -32,16 +33,16 @@ class Hologram {
     private long lastAccess;
 
     /**
-     * The label of this {@link Hologram}.
+     * The label of this {@link ArmorStandHologram}.
      */
     private String label;
 
     /**
-     * This creates a new {@link Hologram} for the given {@link UUID}.
+     * This creates a new {@link ArmorStandHologram} for the given {@link UUID}.
      *
      * @param uniqueId The {@link UUID} of the corresponding {@link ArmorStand}
      */
-    Hologram(@Nonnull UUID uniqueId) {
+    ArmorStandHologram(@Nonnull UUID uniqueId) {
         this.uniqueId = uniqueId;
         this.lastAccess = System.currentTimeMillis();
     }
@@ -76,18 +77,18 @@ class Hologram {
     }
 
     /**
-     * This returns whether this {@link Hologram} has expired.
-     * The armorstand will expire if the last access has been more than 10
+     * This returns whether this {@link ArmorStandHologram} has expired.
+     * The armorStand will expire if the last access has been more than 10
      * minutes ago.
      *
-     * @return Whether this {@link Hologram} has expired
+     * @return Whether this {@link ArmorStandHologram} has expired
      */
     boolean hasExpired() {
         return System.currentTimeMillis() - lastAccess > EXPIRES_AFTER;
     }
 
     /**
-     * This method sets the label of this {@link Hologram}.
+     * This method sets the label of this {@link ArmorStandHologram}.
      *
      * @param label The label to set
      */
@@ -100,29 +101,29 @@ class Hologram {
             this.lastAccess = System.currentTimeMillis();
         } else {
             this.label = label;
-            ArmorStand entity = getArmorStand();
+            ArmorStand armorStand = getArmorStand();
 
-            if (entity != null) {
+            if (armorStand != null) {
                 if (label != null) {
-                    entity.setCustomNameVisible(true);
-                    entity.setCustomName(label);
+                    armorStand.setCustomNameVisible(true);
+                    armorStand.customName(Component.text(label));
                 } else {
-                    entity.setCustomNameVisible(false);
-                    entity.setCustomName(null);
+                    armorStand.setCustomNameVisible(false);
+                    armorStand.customName(Component.text(label));
                 }
             }
         }
     }
 
     /**
-     * This will remove the {@link ArmorStand} and expire this {@link Hologram}.
+     * This will remove the {@link ArmorStand} and expire this {@link ArmorStandHologram}.
      */
     void remove() {
-        ArmorStand armorstand = getArmorStand();
+        ArmorStand armorStand = getArmorStand();
 
-        if (armorstand != null) {
+        if (armorStand != null) {
             lastAccess = 0;
-            armorstand.remove();
+            armorStand.remove();
         }
     }
 }
