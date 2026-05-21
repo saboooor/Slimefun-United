@@ -14,20 +14,19 @@ import io.github.thebusybiscuit.slimefun4.core.handlers.BlockUseHandler;
 import io.github.thebusybiscuit.slimefun4.core.services.holograms.HologramsService;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
 import io.github.thebusybiscuit.slimefun4.implementation.handlers.SimpleBlockBreakHandler;
-import io.github.thebusybiscuit.slimefun4.utils.ArmorStandUtils;
 import io.github.thebusybiscuit.slimefun4.utils.ChatUtils;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.ChestMenu;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.Vector;
 
 /**
  * The {@link HologramProjector} is a very simple block which allows the {@link Player}
@@ -68,7 +67,7 @@ public class HologramProjector extends SlimefunItem implements HologramOwner {
                 blockData.setData(OFFSET_PARAMETER, "0.5");
                 blockData.setData("owner", e.getPlayer().getUniqueId().toString());
 
-                getArmorStand(b, true);
+                updateHologram(b, null);
             }
         };
     }
@@ -78,7 +77,7 @@ public class HologramProjector extends SlimefunItem implements HologramOwner {
 
             @Override
             public void onBlockBreak(@Nonnull Block b) {
-                killArmorStand(b);
+                removeHologram(b);
             }
         };
     }
@@ -125,9 +124,8 @@ public class HologramProjector extends SlimefunItem implements HologramOwner {
                     return;
                 }
 
-                ArmorStand hologram = getArmorStand(projector, true);
-                hologram.setCustomName(ChatColors.color(message));
-                StorageCacheUtils.setData(projector.getLocation(), "text", hologram.getCustomName());
+                updateHologram(projector, ChatColors.color(message));
+                StorageCacheUtils.setData(projector.getLocation(), "text", message);
                 openEditor(pl, projector);
             });
 
@@ -149,12 +147,9 @@ public class HologramProjector extends SlimefunItem implements HologramOwner {
             var blockData = StorageCacheUtils.getBlock(projector.getLocation());
             double offset = NumberUtils.reparseDouble(
                     Double.parseDouble(blockData.getData(OFFSET_PARAMETER)) + (action.isRightClicked() ? -0.1F : 0.1F));
-            ArmorStand hologram = getArmorStand(projector, true);
-            Location l = new Location(
-                    projector.getWorld(), projector.getX() + 0.5, projector.getY() + offset, projector.getZ() + 0.5);
-            hologram.teleport(l);
 
-            blockData.setData(OFFSET_PARAMETER, String.valueOf(offset));
+            updateHologramOffset(projector, offset);
+
             openEditor(pl, projector);
             return false;
         });
@@ -162,35 +157,23 @@ public class HologramProjector extends SlimefunItem implements HologramOwner {
         menu.open(p);
     }
 
-    private static ArmorStand getArmorStand(@Nonnull Block projector, boolean createIfNoneExists) {
-        var blockData = StorageCacheUtils.getBlock(projector.getLocation());
-        String nametag = blockData.getData("text");
-        double offset = Double.parseDouble(blockData.getData(OFFSET_PARAMETER));
-        Location l = new Location(
-                projector.getWorld(), projector.getX() + 0.5, projector.getY() + offset, projector.getZ() + 0.5);
+    public void updateHologram(@Nonnull Block projector, @Nullable String text) {
+        Location loc = projector.getLocation();
+        var blockData = StorageCacheUtils.getBlock(loc);
+        String blockDataText = blockData.getData("text");
+        Vector offset = new Vector(0.5, Double.parseDouble(blockData.getData(OFFSET_PARAMETER)), 0.5);
 
-        for (Entity n : l.getChunk().getEntities()) {
-            if (n instanceof ArmorStand armorStand && l.distanceSquared(n.getLocation()) < 0.4) {
-                String customName = n.getCustomName();
-
-                if (customName != null && customName.equals(nametag)) {
-                    return armorStand;
-                }
-            }
-        }
-
-        if (!createIfNoneExists) {
-            return null;
-        }
-
-        return ArmorStandUtils.spawnArmorStand(l, nametag);
+        Slimefun.getHologramsService()
+                .setHologramLabel(loc.add(offset), ChatColors.color(text != null ? text : blockDataText));
     }
 
-    private static void killArmorStand(@Nonnull Block b) {
-        ArmorStand hologram = getArmorStand(b, false);
+    public void updateHologramOffset(@Nonnull Block projector, double newOffset) {
+        Location loc = projector.getLocation();
+        var blockData = StorageCacheUtils.getBlock(loc);
+        Vector offsetVector = new Vector(0.5, Double.parseDouble(blockData.getData(OFFSET_PARAMETER)), 0.5);
+        Vector newOffsetVector = new Vector(0.5, newOffset, 0.5);
+        blockData.setData(OFFSET_PARAMETER, String.valueOf(newOffset));
 
-        if (hologram != null) {
-            hologram.remove();
-        }
+        Slimefun.getHologramsService().setHologramLocation(loc.add(offsetVector), loc.add(newOffsetVector));
     }
 }
