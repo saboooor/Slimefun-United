@@ -42,6 +42,13 @@ public class HologramsService {
     private static final double RADIUS = 0.5;
 
     /**
+     * The vertical radius (Y) used when scanning for holograms.
+     * TextDisplays can be positioned higher than ArmorStands, so we
+     * allow a larger Y radius to reliably find them.
+     */
+    private static final double Y_RADIUS = 1.5;
+
+    /**
      * The frequency at which to purge.
      * Every 45 seconds.
      */
@@ -53,11 +60,9 @@ public class HologramsService {
     private final Plugin plugin;
 
     /**
-     * The default hologram offset
+     * The default offset for ArmorStands
      */
     private final Vector defaultOffset = new Vector(0.5, 0.75, 0.5);
-
-    private final Vector textDisplayOffset = new Vector(0.5, 1, 0.5);
 
     /**
      * The {@link NamespacedKey} used to store data on a hologram
@@ -139,7 +144,8 @@ public class HologramsService {
         }
 
         // Scan all nearby entities which could be possible holograms
-        Collection<Entity> holograms = loc.getWorld().getNearbyEntities(loc, RADIUS, RADIUS, RADIUS, this::isHologram);
+        Collection<Entity> holograms =
+                loc.getWorld().getNearbyEntities(loc, RADIUS, Y_RADIUS, RADIUS, this::isHologram);
 
         for (Entity n : holograms) {
             if (n instanceof TextDisplay || n instanceof ArmorStand) {
@@ -154,11 +160,12 @@ public class HologramsService {
                     if (hologram != null) {
                         // Fixes #2927 - Remove any duplicates we find
                         n.remove();
-                    } else if (n instanceof ArmorStand
-                            && Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)) {
-                        // Replace ArmorStand with TextDisplay.
-                        n.remove();
-                        hologram = spawnTextDisplay(loc, position);
+                    } else if (Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)
+                            && n instanceof ArmorStand armorStand) {
+                        // Migrate to TextDisplay if we're on 1.19.4 or higher
+                        hologram = spawnTextDisplay(armorStand.getLocation(), position);
+                        hologram.setLabel(armorStand.getCustomName());
+                        armorStand.remove();
                     } else {
                         hologram = getAsHologram(position, n, container);
                     }
@@ -376,5 +383,25 @@ public class HologramsService {
         Validate.notNull(loc, "Location must not be null");
 
         updateHologram(loc, hologram -> hologram.setLabel(label));
+    }
+
+    /**
+     * This will update the location of the {@link Hologram}.
+     *
+     * @param loc
+     *            The {@link Location} of this {@link Hologram}
+     * @param newLoc
+     *            The new location to teleport the {@link Hologram} to
+     */
+    public void setHologramLocation(@Nonnull Location loc, @Nonnull Location newLoc) {
+        Validate.notNull(loc, "Location must not be null");
+        Validate.notNull(newLoc, "New location must not be null");
+
+        updateHologram(loc, hologram -> {
+            Entity entity = hologram.getEntity();
+            if (entity != null) {
+                entity.teleport(newLoc);
+            }
+        });
     }
 }
