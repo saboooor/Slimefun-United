@@ -112,8 +112,6 @@ import io.github.thebusybiscuit.slimefun4.integrations.IntegrationsManager;
 import io.github.thebusybiscuit.slimefun4.utils.NumberUtils;
 import io.github.thebusybiscuit.slimefun4.utils.tags.SlimefunTag;
 import io.papermc.lib.PaperLib;
-import lombok.Getter;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -126,6 +124,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import lombok.Getter;
 import me.mrCookieSlime.CSCoreLibPlugin.general.Inventory.MenuListener;
 import net.guizhanss.slimefun4.updater.AutoUpdateTask;
 import org.apache.commons.lang.Validate;
@@ -609,7 +608,8 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
             new SemanticVersion(1, 20, 0),
             new SemanticVersion(1, 20, 5),
             new SemanticVersion(1, 21, 0),
-            new SemanticVersion(26, 1, 0));
+            new SemanticVersion(26, 1, 0),
+            new SemanticVersion(26, 2, 0));
 
     /**
      * This method checks for the {@link MinecraftVersion} of the {@link Server}.
