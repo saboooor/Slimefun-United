@@ -1,5 +1,6 @@
 package io.github.thebusybiscuit.slimefun4.core.services.holograms;
 
+import city.norain.slimefun4.SlimefunExtended;
 import io.github.bakedlibs.dough.blocks.BlockPosition;
 import io.github.thebusybiscuit.slimefun4.core.attributes.HologramOwner;
 import io.github.thebusybiscuit.slimefun4.implementation.Slimefun;
@@ -26,8 +27,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-
-import city.norain.slimefun4.SlimefunExtended;
 
 /**
  * This service is responsible for handling holograms.
