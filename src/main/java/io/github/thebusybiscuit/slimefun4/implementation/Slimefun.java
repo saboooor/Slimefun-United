@@ -192,10 +192,9 @@ public final class Slimefun extends JavaPlugin implements SlimefunAddon, ICompat
     private final PermissionsService permissionsService = new PermissionsService(this);
     private final PerWorldSettingsService worldSettingsService = new PerWorldSettingsService(this);
     private final MinecraftRecipeService recipeService = new MinecraftRecipeService(this);
-    private final HologramsService hologramsService =
-            SlimefunExtended.getMinecraftVersion().isAtLeast(1, 19, 4)
-                    ? new DisplayHologramsService(this)
-                    : new ArmorStandHologramsService(this);
+    private final HologramsService hologramsService = SlimefunExtended.isAtLeast(1, 19, 4)
+            ? new DisplayHologramsService(this)
+            : new ArmorStandHologramsService(this);
     private final SoundService soundService = new SoundService(this);
     private final ThreadService threadService = new ThreadService(this);
     private final AnalyticsService analyticsService = new AnalyticsService(this);
