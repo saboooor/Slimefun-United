@@ -27,6 +27,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import city.norain.slimefun4.SlimefunExtended;
+
 /**
  * This service is responsible for handling holograms.
  *
@@ -160,7 +162,7 @@ public class HologramsService {
                     if (hologram != null) {
                         // Fixes #2927 - Remove any duplicates we find
                         n.remove();
-                    } else if (Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)
+                    } else if (SlimefunExtended.getMinecraftVersion().isAtLeast(1, 19, 4)
                             && n instanceof ArmorStand armorStand) {
                         // Migrate to TextDisplay if we're on 1.19.4 or higher
                         hologram = spawnTextDisplay(armorStand.getLocation(), position);
@@ -174,7 +176,7 @@ public class HologramsService {
         }
 
         if (hologram == null && createIfNoneExists) {
-            if (Slimefun.getMinecraftVersion().isAtLeast(1, 19, 4)) {
+            if (SlimefunExtended.getMinecraftVersion().isAtLeast(1, 19, 4)) {
                 return spawnTextDisplay(loc, position);
             } else {
                 return spawnArmorStand(loc, position);
